@@ -1,0 +1,4 @@
+*vcxproj*
+x64/
+SDL/x64/
+*.opendb
