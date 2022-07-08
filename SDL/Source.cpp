@@ -50,6 +50,24 @@ void mathCoordsToScreen(double x, double y, double scale, int centerx, int cente
 	sx = round(centerx + x * scale);
 	sy = round(centery - y * scale);
 }
+void drawCircle(int rad, int x_ad, int y_ad)
+{
+	int sx1 = 0, sy1 = 0;
+	double scale = 1;
+	for (int i = 0; i < rad; i++)
+	{
+		for (double alpha = 0; alpha <= 360; alpha += 1.0)
+		{
+			double x1 = i * cos(alpha * M_PI / 180.0);
+			double y1 = i * sin(alpha * M_PI / 180.0);
+
+			mathCoordsToScreen(x1, y1, scale, x_ad, y_ad, sx1, sy1);
+			SDL_RenderDrawPoint(ren, sx1, sy1);
+
+			SDL_RenderPresent(ren);
+		}
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -75,7 +93,7 @@ int main(int argc, char* argv[])
 	mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
 	mathCoordsToScreen(x2, y2, scale, win_width / 2, win_height / 2, sx1, sy1);
 
-	SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 
 	SDL_Rect r = { 0,0,6,6 };
 
@@ -108,9 +126,10 @@ int main(int argc, char* argv[])
 		y1 = radius * sin(alpha * M_PI / 180.0);
 
 		mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
-		r.x = sx1 - 3;
+		/*r.x = sx1 - 3;
 		r.y = sy1 - 3;
-		SDL_RenderFillRect(ren, &r);
+		SDL_RenderFillRect(ren, &r);*/
+		drawCircle(5, sx1, sy1);
 
 		SDL_Delay(100);
 		SDL_RenderPresent(ren);
