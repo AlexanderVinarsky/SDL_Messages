@@ -50,92 +50,69 @@ void mathCoordsToScreen(double x, double y, double scale, int centerx, int cente
 	sx = round(centerx + x * scale);
 	sy = round(centery - y * scale);
 }
-void drawCircle(int rad, int x_ad, int y_ad)
-{
-	int sx1 = 0, sy1 = 0;
-	double scale = 1;
-	for (int i = 0; i < rad; i++)
-	{
-		for (double alpha = 0; alpha <= 360; alpha += 1.0)
-		{
-			double x1 = i * cos(alpha * M_PI / 180.0);
-			double y1 = i * sin(alpha * M_PI / 180.0);
-
-			mathCoordsToScreen(x1, y1, scale, x_ad, y_ad, sx1, sy1);
-			SDL_RenderDrawPoint(ren, sx1, sy1);
-
-			SDL_RenderPresent(ren);
-		}
-	}
-}
 
 int main(int argc, char* argv[])
 {
 	Init();
 
-	SDL_SetRenderDrawColor(ren, 230, 230, 230, 255);
-	SDL_RenderClear(ren);
-	for (int i = 0; i < 300; i++)
-	{
-		SDL_SetRenderDrawColor(ren, 150+2*i, 75+2*i, 150+i, 255);
-		SDL_RenderDrawLine(ren, 0, i, win_width, i);
-		SDL_RenderDrawLine(ren, 0, win_height - 1 - i, win_width, win_height - 1 - i);
-		SDL_RenderDrawLine(ren, i, 0, i, win_height);
-		SDL_RenderDrawLine(ren, win_width - 1 - i, 0, win_width - 1 - i, win_height);
-		SDL_Delay(20);
-		SDL_RenderPresent(ren);
-	}
-
-	double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	double x1, y1, x2, y2;
 	int sx1, sy1, sx2, sy2;
-	double scale = 2.5;
+	double scale = 1.0;
 
-	mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
-	mathCoordsToScreen(x2, y2, scale, win_width / 2, win_height / 2, sx1, sy1);
+	bool rising = true;
+	int point_count = 3;
 
-	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
-
-	SDL_Rect r = { 0,0,6,6 };
-
-	//Descartes Coordinates
-	/*
-	for (x1 = 0; x1 <= 360; x1 += 10.0)
+	while (true)
 	{
-		y1 = circle(x1, 0, 0, 100);
-		mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
-		r.x = sx1 - 3;
-		r.y = sy1 - 3;
-		SDL_RenderDrawPoint(ren, sx1, sy1);
-		SDL_RenderFillRect(ren, &r);
+	#pragma region Draw Lines 
+		SDL_SetRenderDrawColor(ren, 230, 230, 230, 255);
+		SDL_RenderClear(ren);
 
-		y1 = -y1;
+		SDL_SetRenderDrawColor(ren, 100, 100, 230, 255);
+
+		x1 = -200, y1 = 0, x2 = 200, y2 = 0;
+
 		mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
-		r.x = sx1 - 3;
-		r.y = sy1 - 3;
-		SDL_RenderDrawPoint(ren, sx1, sy1);
-		SDL_RenderFillRect(ren, &r);
+		mathCoordsToScreen(x2, y2, scale, win_width / 2, win_height / 2, sx2, sy2);
+
+		SDL_RenderDrawLine(ren, sx1, sy1, sx2, sy2);
+		
+		x1 = 0, y1 = -200, x2 = 0, y2 = 200;
+
+		mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
+		mathCoordsToScreen(x2, y2, scale, win_width / 2, win_height / 2, sx2, sy2);
+
+		SDL_RenderDrawLine(ren, sx1, sy1, sx2, sy2);
+
+	#pragma endregion
+
+		SDL_Point* points = (SDL_Point*)malloc(sizeof(SDL_Point) * (point_count + 1));
+
+		float alpha = 0;
+		for (int i = 0; i < point_count; i++)
+		{
+			alpha += 2 * M_PI / point_count;
+			mathCoordsToScreen(200 * cos(alpha), 200 * sin(alpha), scale, win_width / 2, win_height / 2, points[i].x, points[i].y);
+		}
+		points[point_count] = points[0];
+
+		SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+		SDL_RenderDrawLines(ren, points, point_count + 1);
+
 		SDL_RenderPresent(ren);
-	}
-	*/
 
-	double radius = 100;
-	//Polar Coordinates
-	for (double alpha = 0; alpha <= 360; alpha += 10.0)
-	{
-		x1 = radius * cos(alpha * M_PI / 180.0);
-		y1 = radius * sin(alpha * M_PI / 180.0);
+		SDL_Delay(250);
 
-		mathCoordsToScreen(x1, y1, scale, win_width / 2, win_height / 2, sx1, sy1);
-		/*r.x = sx1 - 3;
-		r.y = sy1 - 3;
-		SDL_RenderFillRect(ren, &r);*/
-		drawCircle(5, sx1, sy1);
+		if (rising)
+			point_count++;
+		else
+			point_count--;
 
-		SDL_Delay(100);
-		SDL_RenderPresent(ren);
+		if (rising && point_count > 10 || !rising && point_count <= 3)
+			rising = !rising;
+		free(points);
 	}
 
-	SDL_Delay(5000);
 	DeInit(0);
 	return 0;
 }
