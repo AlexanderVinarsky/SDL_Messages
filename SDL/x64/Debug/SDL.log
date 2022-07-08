@@ -1,0 +1,6 @@
+﻿  Source.cpp
+C:\Users\Alexander\source\repos\SDL\SDL\Source.cpp(50,12): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\Alexander\source\repos\SDL\SDL\Source.cpp(51,12): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\Alexander\source\repos\SDL\SDL\Source.cpp(90,21): warning C4101: sy2: неиспользованная локальная переменная
+C:\Users\Alexander\source\repos\SDL\SDL\Source.cpp(90,16): warning C4101: sx2: неиспользованная локальная переменная
+  SDL.vcxproj -> C:\Users\Alexander\source\repos\SDL\x64\Debug\SDL.exe
